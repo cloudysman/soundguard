@@ -1,0 +1,31 @@
+# --- caches, byte-code, transient ---
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+node_modules/
+test-results/
+uploads/
+
+# --- datasets: large, and redistributed under their own licence, so fetch them rather than vendor them ---
+data/
+
+# --- research caches and outputs (regenerate with pipeline.py / eval.py) ---
+rerun_cache/
+results_paper/
+panns_cache/
+
+# --- superseded scripts, kept on disk but not tracked ---
+_old/
+
+# --- fold artefacts: keep only the out-of-fold logits the dashboard and the tests actually read ---
+rerun_results/*
+!rerun_results/mlp_fold*.pt
+!rerun_results/summary.json
+
+# --- editor / OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

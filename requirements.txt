@@ -1,0 +1,21 @@
+# --- web layer ---
+fastapi
+uvicorn[standard]
+python-multipart          # required by FastAPI for UploadFile / Form on /api/predict/upload
+pydantic                  # imported directly by app.py (BaseModel, Field); do not rely on fastapi pulling it
+
+# --- inference layer (REQUIRED — without these every prediction endpoint returns 503) ---
+torch
+torchaudio
+torchvision               # frozen ResNet-18 backbone + IMAGENET1K_V1 weights
+numpy
+soundfile                 # audio decoding; NOT bundled with torchaudio, must be installed
+
+# --- research scripts (pipeline.py, summarise_*.py; not needed to serve the app) ---
+pandas
+scipy
+
+# --- tests ---
+pytest
+httpx                     # fastapi.testclient (tests_be, tests_sys)
+pytest-playwright         # browser tests (tests_fe); also needs: playwright install chromium

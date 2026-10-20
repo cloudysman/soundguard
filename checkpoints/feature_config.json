@@ -1,0 +1,22 @@
+{
+  "sample_rate": 16000,
+  "max_length_s": 4,
+  "n_mels": 64,
+  "n_fft": 1024,
+  "hop_length": 512,
+  "normalize": "minmax01_then_imagenet",
+  "in_features": 512,
+  "num_classes": 10,
+  "classes": [
+    "air_conditioner",
+    "car_horn",
+    "children_playing",
+    "dog_bark",
+    "drilling",
+    "engine_idling",
+    "gun_shot",
+    "jackhammer",
+    "siren",
+    "street_music"
+  ]
+}

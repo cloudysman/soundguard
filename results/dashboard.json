@@ -1,0 +1,179 @@
+{
+  "reliability": {
+    "bins": [
+      0.033,
+      0.1,
+      0.167,
+      0.233,
+      0.3,
+      0.367,
+      0.433,
+      0.5,
+      0.567,
+      0.633,
+      0.7,
+      0.767,
+      0.833,
+      0.9,
+      0.967
+    ],
+    "clean": [
+      0.0,
+      0.0,
+      0.0,
+      0.667,
+      0.045,
+      0.207,
+      0.282,
+      0.333,
+      0.369,
+      0.373,
+      0.481,
+      0.519,
+      0.47,
+      0.576,
+      0.851
+    ],
+    "corrupted": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.143,
+      0.142,
+      0.142,
+      0.277,
+      0.268,
+      0.299,
+      0.338,
+      0.331,
+      0.429,
+      0.442,
+      0.703
+    ]
+  },
+  "riskCoverage": {
+    "coverage": [
+      0.1,
+      0.2,
+      0.3,
+      0.4,
+      0.5,
+      0.6,
+      0.7,
+      0.8,
+      0.9,
+      1.0
+    ],
+    "clean": [
+      0.017,
+      0.032,
+      0.048,
+      0.074,
+      0.105,
+      0.141,
+      0.178,
+      0.219,
+      0.256,
+      0.3
+    ],
+    "corrupted": [
+      0.082,
+      0.14,
+      0.19,
+      0.245,
+      0.289,
+      0.331,
+      0.367,
+      0.404,
+      0.438,
+      0.473
+    ]
+  },
+  "classAcc": [
+    {
+      "k": "gun_shot",
+      "clean": 91.7,
+      "corrupt": 70.1
+    },
+    {
+      "k": "street_music",
+      "clean": 78.9,
+      "corrupt": 46.4
+    },
+    {
+      "k": "dog_bark",
+      "clean": 76.7,
+      "corrupt": 70.6
+    },
+    {
+      "k": "children_playing",
+      "clean": 74.2,
+      "corrupt": 54.6
+    },
+    {
+      "k": "siren",
+      "clean": 73.2,
+      "corrupt": 55.7
+    },
+    {
+      "k": "drilling",
+      "clean": 72.9,
+      "corrupt": 59.6
+    },
+    {
+      "k": "engine_idling",
+      "clean": 68.1,
+      "corrupt": 51.4
+    },
+    {
+      "k": "jackhammer",
+      "clean": 58.1,
+      "corrupt": 44.0
+    },
+    {
+      "k": "car_horn",
+      "clean": 57.8,
+      "corrupt": 46.4
+    },
+    {
+      "k": "air_conditioner",
+      "clean": 55.6,
+      "corrupt": 35.7
+    }
+  ],
+  "metrics": [
+    {
+      "k": "ECE",
+      "desc": "Expected Calibration Error",
+      "clean": 0.1859,
+      "corrupt": 0.3232,
+      "lowerBetter": true
+    },
+    {
+      "k": "NLL",
+      "desc": "Negative Log-Likelihood",
+      "clean": 1.466,
+      "corrupt": 2.86,
+      "lowerBetter": true
+    },
+    {
+      "k": "Brier",
+      "desc": "Brier score",
+      "clean": 0.476,
+      "corrupt": 0.759,
+      "lowerBetter": true
+    },
+    {
+      "k": "Accuracy",
+      "desc": "Top-1 accuracy",
+      "clean": 0.7,
+      "corrupt": 0.527,
+      "lowerBetter": false,
+      "pct": true
+    }
+  ],
+  "_head": "mlp",
+  "_source": "rerun last-epoch (clean) + corrupted_mlp (mixed severity)",
+  "_corrupted_pending": false
+}

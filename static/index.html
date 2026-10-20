@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SoundGuard — Environmental Sound Classification</title>
+<link rel="stylesheet" href="soundguard.css">
+</head>
+<body>
+
+<header class="app-header">
+  <div class="brand">
+    <div class="logo" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    <div>
+      <div class="brand-name">SoundGuard</div>
+      <div class="brand-sub">uncertainty-aware ESC · UrbanSound8K</div>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button class="tab" id="tab-btn-inference" role="tab" data-tab="inference" aria-selected="true" aria-controls="tab-inference"><span class="dot"></span>Inference</button>
+    <button class="tab" id="tab-btn-corruption" role="tab" data-tab="corruption" aria-selected="false" aria-controls="tab-corruption"><span class="dot"></span>Corruption Lab</button>
+    <button class="tab" id="tab-btn-dashboard" role="tab" data-tab="dashboard" aria-selected="false" aria-controls="tab-dashboard"><span class="dot"></span>Results Dashboard</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ============ TAB 1 : INFERENCE ============ -->
+  <section class="tab-panel active" id="tab-inference" role="tabpanel" aria-labelledby="tab-btn-inference" tabindex="0">
+    <div class="section-eyebrow"><span class="num">01</span> Inference</div>
+    <h1 class="section-title">Classify a sound — and decide whether to trust it</h1>
+    <p class="section-desc" style="margin-bottom:1.3rem;">Upload or record an environmental sound. The model shows what it sees, its top predictions, a calibrated confidence, and a reliability verdict.</p>
+
+    <!-- input bar -->
+    <div class="card input-bar">
+      <button class="btn btn-primary" id="btn-upload">
+        <svg class="ic" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4l-5 5M12 4l5 5"/><path d="M4 17v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2"/></svg>
+        Upload file
+      </button>
+      <button class="btn btn-ghost rec" id="btn-record">
+        <svg class="ic" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+        <span class="lbl">Record</span>
+      </button>
+      <input type="file" id="file-input" accept="audio/*" hidden>
+      <div class="bar-divider"></div>
+      <span class="samples-label">samples</span>
+      <div class="chips">
+        <button class="chip" data-sample="dog" aria-pressed="true">dog_bark</button>
+        <button class="chip" data-sample="siren">siren</button>
+        <button class="chip" data-sample="jack">jackhammer</button>
+        <button class="chip" data-sample="horn">car_horn</button>
+        <button class="chip" data-sample="kids">children_playing</button>
+        <button class="chip" data-sample="gun">gun_shot</button>
+        <button class="chip" data-sample="ac">air_conditioner</button>
+      </div>
+      <div class="now-playing" data-nowplaying></div>
+    </div>
+
+    <!-- plots -->
+    <div class="plots-grid">
+      <div class="card">
+        <div class="card-head"><h3>Waveform</h3><span class="hint">time → amplitude</span></div>
+        <div class="plot-body">
+          <canvas class="plot" id="wave-inf" width="760" height="230"></canvas>
+          <div class="axis-row"><span>0.0s</span><span>illustrative, not the recorded signal</span><span>end</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Mel-spectrogram</h3><span class="hint">what the model sees</span></div>
+        <div class="plot-body">
+          <canvas class="plot" id="mel-inf" width="760" height="230"></canvas>
+          <div class="axis-row"><span>low freq</span><span>time → mel-frequency energy</span><span>high freq</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- results -->
+    <div class="result-grid">
+      <div class="card">
+        <div class="card-head"><h3>Prediction</h3><span class="hint">softmax over 10 classes</span></div>
+        <div class="pred-body" id="pred-body"></div>
+      </div>
+      <div class="right-col">
+        <div class="card">
+          <div class="card-head"><h3>Confidence</h3><span class="hint">decision thresholds 45 / 70</span></div>
+          <div class="conf-body" id="conf-body"></div>
+        </div>
+        <div class="card status-card" data-status-card></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TAB 2 : CORRUPTION LAB ============ -->
+  <section class="tab-panel" id="tab-corruption" role="tabpanel" aria-labelledby="tab-btn-corruption" tabindex="0">
+    <div class="section-eyebrow"><span class="num">02</span> Corruption Lab</div>
+    <h1 class="section-title">Degrade the input — watch the verdict change</h1>
+    <p class="section-desc" style="margin-bottom:1.3rem;">Add real-world corruption to the current clip. As quality drops, confidence falls and the status walks from <b style="color:var(--green-ink)">Reliable</b> → <b style="color:var(--amber-ink)">Uncertain</b> → <b style="color:var(--red-ink)">Reject</b> in real time.</p>
+
+    <div class="cor-hero">
+      <!-- sliders + quality meters -->
+      <div class="card">
+        <div class="card-head"><h3>Corruption</h3><button class="reset-btn" data-reset>Reset to clean</button></div>
+        <div class="sliders">
+          <div class="slider-row">
+            <div class="slabel"><span class="l"><span class="sw" style="background:#34e0c8"></span>Background noise</span><span class="v" data-sval="noise-cor">0%</span></div>
+            <input type="range" class="noise" min="0" max="100" value="0" data-slider="noise" data-group="cor" aria-label="Background noise">
+            <div class="desc">adds broadband noise → lowers SNR</div>
+          </div>
+          <div class="slider-row">
+            <div class="slabel"><span class="l"><span class="sw" style="background:#35d69a"></span>Low volume</span><span class="v" data-sval="volume-cor">0%</span></div>
+            <input type="range" min="0" max="100" value="0" data-slider="volume" data-group="cor" aria-label="Low volume">
+            <div class="desc">attenuates signal toward the noise floor</div>
+          </div>
+          <div class="slider-row">
+            <div class="slabel"><span class="l"><span class="sw" style="background:#f76a5f"></span>Clipping distortion</span><span class="v" data-sval="clip-cor">0%</span></div>
+            <input type="range" min="0" max="100" value="0" data-slider="clip" data-group="cor" aria-label="Clipping distortion">
+            <div class="desc">saturates peaks → adds high-freq harmonics</div>
+          </div>
+        </div>
+        <div class="qmeters" id="qmeters"></div>
+      </div>
+
+      <!-- readout -->
+      <div class="cor-readout">
+        <div class="card status-card" data-status-card></div>
+        <div class="card"><div class="conf-compare" id="conf-compare"></div></div>
+      </div>
+    </div>
+
+    <!-- live plots -->
+    <div class="plots-grid" style="margin-bottom:0;">
+      <div class="card">
+        <div class="card-head"><h3>Waveform</h3><span class="hint">illustrative, not measured</span></div>
+        <div class="plot-body"><canvas class="plot" id="wave-cor" width="760" height="220"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Mel-spectrogram</h3><span class="hint">what the model sees</span></div>
+        <div class="plot-body"><canvas class="plot" id="mel-cor" width="760" height="220"></canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TAB 3 : DASHBOARD ============ -->
+  <section class="tab-panel" id="tab-dashboard" role="tabpanel" aria-labelledby="tab-btn-dashboard" tabindex="0">
+    <div class="section-eyebrow"><span class="num">03</span> Results Dashboard</div>
+    <h1 class="section-title">Calibration, robustness &amp; selective prediction</h1>
+    <p class="section-desc" style="margin-bottom:1.3rem;">Aggregate evaluation across the test set — clean vs. corrupted. Calibration is the primary metric, not raw accuracy.</p>
+
+    <div class="dash-grid">
+      <div class="card">
+        <div class="card-head"><h3>Reliability diagram</h3><span class="hint">15-bin · ideal = diagonal</span></div>
+        <div class="chart-body" id="chart-reliability"></div>
+        <div class="legend">
+          <span class="li"><span class="sw" style="background:#34e0c8"></span>Clean</span>
+          <span class="li"><span class="sw" style="background:#f76a5f"></span>Corrupted</span>
+          <span class="li"><span class="sw dash"></span>Perfect calibration</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Risk–coverage curve</h3><span class="hint">selective prediction</span></div>
+        <div class="chart-body" id="chart-risk"></div>
+        <div class="legend">
+          <span class="li"><span class="sw" style="background:#34e0c8"></span>Clean</span>
+          <span class="li"><span class="sw" style="background:#f76a5f"></span>Corrupted</span>
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h3>Metrics — clean vs. corrupted</h3><span class="hint">frozen ResNet-18 + MLP head</span></div>
+        <div id="metrics-table"></div>
+      </div>
+      <div class="card full">
+        <div class="card-head"><h3>Per-class accuracy — robustness gap</h3><span class="hint">10 UrbanSound8K classes</span></div>
+        <div class="classacc">
+          <div class="ca-legend">
+            <span class="li"><span class="sw" style="background:#34e0c8"></span>Clean</span>
+            <span class="li"><span class="sw" style="background:#f76a5f"></span>Corrupted</span>
+            <span class="li" style="margin-left:auto;color:var(--muted)">gap = drop under corruption</span>
+          </div>
+          <div id="classacc-rows"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="soundguard-data.js"></script>
+<script src="soundguard-app.js"></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+The MIT licence in LICENSE covers the source code of this repository only.
+Two things it ships alongside the code carry their own terms.
+
+Audio
+-----
+The seven clips in samples/ are taken from UrbanSound8K and remain under that
+dataset's licence, Creative Commons Attribution-NonCommercial 4.0, which is not
+compatible with the MIT terms above. They are redistributed here only so that
+the demo runs without a download.
+
+  J. Salamon, C. Jacoby and J. P. Bello. A dataset and taxonomy for urban sound
+  research. 22nd ACM International Conference on Multimedia, Orlando, 2014.
+  https://urbansounddataset.weebly.com/urbansound8k.html
+
+The full dataset is not included. pipeline.py and the scripts in experiments/
+expect UrbanSound8K and ESC-50 to be downloaded separately.
+
+Model weights
+-------------
+The frozen backbone is torchvision's ResNet-18 with its ImageNet weights, under
+the licence of that project. checkpoints/mlp_prod.pth is the head trained here
+and is covered by the MIT terms.
